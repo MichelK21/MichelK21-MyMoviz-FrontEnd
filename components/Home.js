@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react';
-import { Popover, Button } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import Movie from './Movie';
-import 'antd/dist/antd.css';
-import styles from '../styles/Home.module.css';
+import { useState, useEffect } from "react";
+import { Popover, Button } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import Movie from "./Movie";
+import "antd/dist/antd.css";
+import styles from "../styles/Home.module.css";
 
 function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
-  const [discoverMovies, setDiscoverMovies] = useState([])
+  const [discoverMovies, setDiscoverMovies] = useState([]);
 
   useEffect(() => {
-    fetch("https://my-moviz-back-end.vercel.app/movies")
-    .then(res => res.json())
-    .then(data =>{
-      setDiscoverMovies(data.movies.results);
-      console.log(data);
-    });
+    fetch("https://mymoviz-backend-xi-eight.vercel.app/movies")
+      .then((res) => res.json())
+      .then((data) => {
+        setDiscoverMovies(data.movies.results);
+        console.log(data);
+      });
   }, []);
 
   // Liked movies (inverse data flow)
   const updateLikedMovies = (movieTitle) => {
-    if (likedMovies.find(movie => movie === movieTitle)) {
-      setLikedMovies(likedMovies.filter(movie => movie !== movieTitle));
+    if (likedMovies.find((movie) => movie === movieTitle)) {
+      setLikedMovies(likedMovies.filter((movie) => movie !== movieTitle));
     } else {
       setLikedMovies([...likedMovies, movieTitle]);
     }
@@ -32,20 +32,33 @@ function Home() {
     return (
       <div key={i} className={styles.likedMoviesContainer}>
         <span className="likedMovie">{data}</span>
-        <FontAwesomeIcon icon={faCircleXmark} onClick={() => updateLikedMovies(data)} className={styles.crossIcon} />
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          onClick={() => updateLikedMovies(data)}
+          className={styles.crossIcon}
+        />
       </div>
     );
   });
 
   const popoverContent = (
-    <div className={styles.popoverContent}>
-      {likedMoviesPopover}
-    </div>
+    <div className={styles.popoverContent}>{likedMoviesPopover}</div>
   );
 
   const movies = discoverMovies.map((data, i) => {
-    const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={data.overview} poster={data.poster_path} voteAverage={data.vote_average} voteCount={data.vote_count} />;
+    const isLiked = likedMovies.some((movie) => movie === data.title);
+    return (
+      <Movie
+        key={i}
+        updateLikedMovies={updateLikedMovies}
+        isLiked={isLiked}
+        title={data.title}
+        overview={data.overview}
+        poster={data.poster_path}
+        voteAverage={data.vote_average}
+        voteCount={data.vote_count}
+      />
+    );
   });
 
   return (
@@ -55,14 +68,17 @@ function Home() {
           <img src="logo.png" alt="Logo" />
           <img className={styles.logo} src="logoletter.png" alt="Letter logo" />
         </div>
-        <Popover title="Liked movies" content={popoverContent} className={styles.popover} trigger="click">
+        <Popover
+          title="Liked movies"
+          content={popoverContent}
+          className={styles.popover}
+          trigger="click"
+        >
           <Button>♥ {likedMovies.length} movie(s)</Button>
         </Popover>
       </div>
       <div className={styles.title}>LAST RELEASES</div>
-      <div className={styles.moviesContainer}>
-        {movies}
-      </div>
+      <div className={styles.moviesContainer}>{movies}</div>
     </div>
   );
 }
